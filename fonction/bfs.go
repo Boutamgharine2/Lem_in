@@ -16,11 +16,11 @@ func NewGraph() *Graph {
 func (g *Graph) AddEdge(v1, v2 int) {
 	g.vertices[v1] = append(g.vertices[v1], v2)
 	g.vertices[v2] = append(g.vertices[v2], v1) // pour un graphe non orienté
-	fmt.Println(g.vertices)
 }
 
+var visited = make(map[int]bool)
+
 func BFS(g *Graph, start int) {
-	visited := make(map[int]bool)
 	queue := list.New()
 
 	visited[start] = true
@@ -42,6 +42,7 @@ func BFS(g *Graph, start int) {
 		}
 	}
 }
+
 // func main() {
 // 	g := NewGraph()
 // 	g.AddEdge(0, 1)
@@ -53,4 +54,3 @@ func BFS(g *Graph, start int) {
 // 	fmt.Println("BFS starting from node 0:")
 // 	BFS(g, 0)
 // }
-
