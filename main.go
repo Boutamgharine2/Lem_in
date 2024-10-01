@@ -179,26 +179,56 @@ func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string,
 	delete(visited, start)
 }
 
-func Choi(slice [][]string) [][]string {
-	var slice2 [][]string
-	for i, v := range slice {
-		for j := 0; j < len(slice); j++ {
-			if i != j {
-				if Comparaison(v, slice[j]) {
-					slice2 = append(slice2, slice[j])
+func AllPathDisjoin(allPaths [][]string) map[int][][]string {
+	res := make(map[int][][]string)
+	indix := 0
+	for _, path := range allPaths {
+		passed := false
+		if len(res) == 0 {
+			res[indix] = append(res[indix], path)
+		} else {
+			for i, way := range res {
+				if !HandulWay(way, path) {
+					res[i] = append(res[i], path)
+					passed = true
 				}
+			}
+			if !passed {
+				indix++
+				res[indix] = append(res[indix], path)
 			}
 		}
 	}
-	return slice2
+
+	for _, Paths := range allPaths {
+		for i, r := range res {
+			if !HandulWay(r, Paths) {
+				res[i] = append(res[i], Paths)
+			}
+		}
+	}
+	return res
 }
 
-func Comparaison(slice1, slice2 []string) bool {
-	for i := 1; i < len(slice1)-1; i++ {
-		for j := 1; j < len(slice2)-1; j++ {
-			if slice1[i] == slice2[j] {
-				return false
-			}
+func HandulWay(Paths [][]string, way []string) bool {
+	for _, t := range Paths {
+		if !isDisjoint(t, way) {
+			return true
+		}
+	}
+	return false
+}
+func isDisjoint(path1, path2 []string) bool {
+	rooms1 := make(map[string]bool)
+	if len(path2) == 2 && len(path1) == 2 {
+		return false
+	}
+	for _, room := range path1[1 : len(path1)-1] {
+		rooms1[room] = true
+	}
+	for _, room := range path2[1 : len(path2)-1] {
+		if rooms1[room] {
+			return false
 		}
 	}
 	return true
@@ -250,5 +280,5 @@ func main() {
 	var paths [][]string
 
 	test.dfs(start, end, visited, []string{}, &paths)
-	fmt.Println(Choi(paths))
+	fmt.Println(AllPathDisjoin(paths))
 }
