@@ -162,22 +162,46 @@ func Supartion(s string) []string {
 //		return nil // Retourner l'ordre même si le sommet de fin n'est pas atteint
 //	}
 
-func (g *Graph) dfs(start string, end string, visited map[string]bool, path []string, paths *[][]string) {
+func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string, paths *[][]string) {
 	visited[start] = true
-	path = append(path, start)
+	path = append(path, start.nam)
 
 	if start == end {
 		tmp := make([]string, len(path))
 		copy(tmp, path)
 		*paths = append(*paths, tmp)
 	}
-	s := g.GetVertex(start)
-	for _, neigh := range s.adjacenlist {
-		if !visited[neigh.nam] {
-			g.dfs(neigh.nam, end, visited, path, paths)
+	for _, neigh := range start.adjacenlist {
+		if !visited[neigh] {
+			g.dfs(neigh, end, visited, path, paths)
 		}
 	}
-	visited[start] = false
+	delete(visited, start)
+}
+
+func Choi(slice [][]string) [][]string {
+	var slice2 [][]string
+	for i, v := range slice {
+		for j := 0; j < len(slice); j++ {
+			if i != j {
+				if Comparaison(v, slice[j]) {
+					slice2 = append(slice2, slice[j])
+				}
+			}
+		}
+	}
+	return slice2
+}
+
+func Comparaison(slice1, slice2 []string) bool {
+	for i := 1; i < len(slice1)-1; i++ {
+		for j := 1; j < len(slice2)-1; j++ {
+			if slice1[i] == slice2[j] {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func main() {
@@ -195,7 +219,7 @@ func main() {
 	str := string(file)
 	str1 := strings.Split(str, "\n")
 	// insect := str1[0]
-	for i := 1; i < len(str1)-1; i++ {
+	for i := 1; i < len(str1); i++ {
 
 		if strings.Contains(str1[i], "-") {
 			Edges = append(Edges, str1[i])
@@ -211,26 +235,20 @@ func main() {
 	// fmt.Println(insect)
 	// fmt.Println(vertexe)
 	test := &Graph{}
+	// fmt.Println(Edges)
 	for i := 0; i < len(vertexe); i++ {
 		test.AddVertex(vertexe[i])
 	}
 	for i := 0; i < len(Edges); i++ {
-		Tab := Supartion(Edges[i])
+		Tab := strings.Split(Edges[i], "-")
 		test.AddEdge(Tab[0], Tab[1])
 	}
 
-	// fmt.Println(Romm[1])
-	// BFS(test,Romm[1])
-	// test.Print()
-	// fmt.Println(Romm[1])
-	fmt.Println(vertexe[len(vertexe)-1])
-	fmt.Println(vertexe[0])
-	visited := make(map[string]bool)
+	visited := make(map[*Vertix]bool)
+	start := test.GetVertex(vertexe[0])
+	end := test.GetVertex(vertexe[len(vertexe)-1])
+	var paths [][]string
 
-	var (
-		path  []string
-		paths [][]string
-	)
-	test.dfs(vertexe[0], vertexe[len(vertexe)-1], visited, path, &paths)
-	fmt.Println(paths)
+	test.dfs(start, end, visited, []string{}, &paths)
+	fmt.Println(Choi(paths))
 }
