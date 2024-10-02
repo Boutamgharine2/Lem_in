@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 
 	anouar "anouar/fonction"
@@ -91,77 +92,6 @@ func Supartion(s string) []string {
 	return T
 }
 
-// func BFS(g *Vertix, start string) {
-// 	visited := make(map[string]bool)
-// 	queue := list.New()
-
-// 	visited[start] = true
-// 	queue.PushBack(start)
-
-// 	for queue.Len() > 0 {
-// 		element := queue.Front()
-// 		queue.Remove(element)
-// 		node := element.Value.(int)
-// 		fmt.Println(node)
-
-// 		for _, neighbor := range g.adjacenlist {
-// 			if !visited[neighbor.nam] {
-// 				visited[neighbor.nam] = true
-// 				queue.PushBack(neighbor)
-// 				fmt.Println(visited)
-
-// 			}
-// 		}
-// 	}
-// }
-
-// func (g *Graph) BFS(start, end string) []string {
-// var visited = make(map[string]bool)
-// 	order := []string{}
-// 	queue := list.New()
-
-// 	// Trouver le sommet de départ
-// 	var startVertex *Vertix
-// 	for _, v := range g.Vertices {
-// 		if v.nam == start {
-// 			startVertex = v
-// 			break
-// 		}
-// 	}
-
-// 	if startVertex == nil {
-// 		return order // Retourne vide si le sommet de départ n'est pas trouvé
-// 	}
-
-// 	// Ajouter le sommet de départ à la queue
-// 	queue.PushBack(startVertex)
-// 	visited[start] = true
-
-// 	for queue.Len() > 0 {
-// 		element := queue.Front()
-// 		queue.Remove(element)
-// 		current := element.Value.(*Vertix)
-
-// 		// Ajouter le sommet courant à l'ordre
-// 		order = append(order, current.nam)
-
-// 		// Vérifier si nous avons atteint le sommet de fin
-// 		if current.nam == end {
-// 			return order // Retourner l'ordre si fin atteinte
-// 		}
-
-// 		// Vérifier les voisins
-// 		for _, neighbor := range current.adjacenlist {
-// 			if !visited[neighbor.nam] {
-// 				visited[neighbor.nam] = true
-// 				queue.PushBack(neighbor)
-// 			}
-// 		}
-// 	}
-
-//		return nil // Retourner l'ordre même si le sommet de fin n'est pas atteint
-//	}
-
 func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string, paths *[][]string) {
 	visited[start] = true
 	path = append(path, start.nam)
@@ -179,7 +109,7 @@ func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string,
 	delete(visited, start)
 }
 
-func AllPathDisjoin(allPaths [][]string) map[int][][]string {
+func Rougroupe(allPaths [][]string) map[int][][]string {
 	res := make(map[int][][]string)
 	indix := 0
 	for _, path := range allPaths {
@@ -188,14 +118,14 @@ func AllPathDisjoin(allPaths [][]string) map[int][][]string {
 			res[indix] = append(res[indix], path)
 		} else {
 			for i, way := range res {
-				if !HandulWay(way, path) {
+				if !HandulWay(way, path) { // comparer entre le tableau actuel est le tableau de l'indice i dans la cart
 					res[i] = append(res[i], path)
 					passed = true
 				}
 			}
 			if !passed {
 				indix++
-				res[indix] = append(res[indix], path)
+				res[indix] = append(res[indix], path) // crier autre indice de la cart pour stocker la nouvel parcour
 			}
 		}
 	}
@@ -210,15 +140,16 @@ func AllPathDisjoin(allPaths [][]string) map[int][][]string {
 	return res
 }
 
-func HandulWay(Paths [][]string, way []string) bool {
+func HandulWay(Paths [][]string, way []string) bool { // comparer entre un tableau et un tableau bidimentionel si il n'y a pas un element commine entre ce tableau et les tableau de [][]
 	for _, t := range Paths {
-		if !isDisjoint(t, way) {
+		if !Com2Tab(t, way) { // il ya un element commun
 			return true
 		}
 	}
 	return false
 }
-func isDisjoint(path1, path2 []string) bool {
+
+func Com2Tab(path1, path2 []string) bool { // comparer entre deux tableau et verifie si il partage un element si le cas la fonction retourn  false
 	rooms1 := make(map[string]bool)
 	if len(path2) == 2 && len(path1) == 2 {
 		return false
@@ -262,10 +193,7 @@ func main() {
 			vertexe = append(vertexe, Romm[i])
 		}
 	}
-	// fmt.Println(insect)
-	// fmt.Println(vertexe)
 	test := &Graph{}
-	// fmt.Println(Edges)
 	for i := 0; i < len(vertexe); i++ {
 		test.AddVertex(vertexe[i])
 	}
@@ -280,5 +208,88 @@ func main() {
 	var paths [][]string
 
 	test.dfs(start, end, visited, []string{}, &paths)
-	fmt.Println(AllPathDisjoin(paths))
+	d := Rougroupe(paths)
+	r := []string{"1","2"}
+	b:= FindPaths(d)
+	b = append(b, r)
+
+	fmt.Println(Chois(b,1))
 }
+
+func FindPaths(m map[int][][]string) [][]string {
+	if len(m) == 0 {
+		return nil
+	}
+
+	maxlin := 0
+	for i := range m {
+		if len(m[i]) > len(m[maxlin]) {
+			maxlin = i
+		}
+	}
+
+	return m[maxlin]
+}
+
+
+
+func Chois(s [][]string, n int) [][]string {
+	sort.Slice(s, func(i, j int) bool {
+		return len(s[i]) < len(s[j])
+	})
+	
+
+
+
+
+	
+}
+
+// func Parcour(slice [][]string, n int) {
+// 	pp := make([][]string, len(slice))
+// 	for i := 0; i < len(slice); i++ {
+// 		pp[i] = make([]string, len(slice[i]))
+// 	}
+// 	j := 1
+// 	for {
+// 		move(pp)
+// 		for i := 0; i < len(pp); i++ {
+// 			if j <= n {
+// 				pp[i][0] = "L" + strconv.Itoa(j)
+// 				j++
+// 			}
+// 		}
+// 		if checknil(pp) {
+// 			break
+// 		}
+// 		for i := 0; i < len(pp); i++ {
+// 			for j := 0; j < len(pp[i]); j++ {
+// 				if pp[i][j] != "" {
+// 					fmt.Print(pp[i][j], "-", slice[i][j], " ")
+// 				}
+// 			}
+// 		}
+// 		fmt.Println()
+// 	}
+// }
+
+// func checknil(pp [][]string) bool {
+// 	for i := 0; i < len(pp); i++ {
+// 		for j := 0; j < len(pp[i]); j++ {
+// 			if pp[i][j] != "" {
+// 				return false
+// 			}
+// 		}
+// 	}
+// 	return true
+// }
+
+// func move(arr [][]string) [][]string {
+// 	for i := 0; i < len(arr); i++ {
+// 		for j := len(arr[i]) - 1; j > 0; j-- {
+// 			arr[i][j] = arr[i][j-1]
+// 		}
+// 		arr[i][0] = ""
+// 	}
+// 	return arr
+// }
