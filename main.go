@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"sort"
+	"strconv"
 	"strings"
 
-	anouar "anouar/fonction"
+	Lemin "Lemin/fonction"
 )
 
 type Graph struct {
@@ -77,21 +75,6 @@ func (G *Graph) Print() {
 	}
 }
 
-func Supartion(s string) []string {
-	var T []string
-	c := ""
-	for i := 0; i < len(s); i++ {
-		if s[i] != '-' {
-			c += string(s[i])
-		} else {
-			T = append(T, c)
-			c = ""
-		}
-	}
-	T = append(T, c)
-	return T
-}
-
 func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string, paths *[][]string) {
 	visited[start] = true
 	path = append(path, start.nam)
@@ -109,90 +92,9 @@ func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string,
 	delete(visited, start)
 }
 
-func Rougroupe(allPaths [][]string) map[int][][]string {
-	res := make(map[int][][]string)
-	indix := 0
-	for _, path := range allPaths {
-		passed := false
-		if len(res) == 0 {
-			res[indix] = append(res[indix], path)
-		} else {
-			for i, way := range res {
-				if !HandulWay(way, path) { // comparer entre le tableau actuel est le tableau de l'indice i dans la cart
-					res[i] = append(res[i], path)
-					passed = true
-				}
-			}
-			if !passed {
-				indix++
-				res[indix] = append(res[indix], path) // crier autre indice de la cart pour stocker la nouvel parcour
-			}
-		}
-	}
-
-	for _, Paths := range allPaths {
-		for i, r := range res {
-			if !HandulWay(r, Paths) {
-				res[i] = append(res[i], Paths)
-			}
-		}
-	}
-	return res
-}
-
-func HandulWay(Paths [][]string, way []string) bool { // comparer entre un tableau et un tableau bidimentionel si il n'y a pas un element commine entre ce tableau et les tableau de [][]
-	for _, t := range Paths {
-		if !Com2Tab(t, way) { // il ya un element commun
-			return true
-		}
-	}
-	return false
-}
-
-func Com2Tab(path1, path2 []string) bool { // comparer entre deux tableau et verifie si il partage un element si le cas la fonction retourn  false
-	rooms1 := make(map[string]bool)
-	if len(path2) == 2 && len(path1) == 2 {
-		return false
-	}
-	for _, room := range path1[1 : len(path1)-1] {
-		rooms1[room] = true
-	}
-	for _, room := range path2[1 : len(path2)-1] {
-		if rooms1[room] {
-			return false
-		}
-	}
-	return true
-}
-
 func main() {
-	var Edges []string
-	var vertexe []string
-	var Romm []string
-	v := os.Args
-	if len(v) != 2 {
-		log.Fatal("invalid Arguments!")
-	}
-	file, err := os.ReadFile(v[1])
-	if err != nil {
-		log.Fatal(err)
-	}
-	str := string(file)
-	str1 := strings.Split(str, "\n")
-	// insect := str1[0]
-	for i := 1; i < len(str1); i++ {
-
-		if strings.Contains(str1[i], "-") {
-			Edges = append(Edges, str1[i])
-		}
-		Romm = append(Romm, anouar.Roms(str1[i]))
-
-	}
-	for i := 0; i < len(Romm); i++ {
-		if Romm[i] != "" {
-			vertexe = append(vertexe, Romm[i])
-		}
-	}
+	var paths [][]string
+	vertexe, Edges, insects := Lemin.Handlfile()
 	test := &Graph{}
 	for i := 0; i < len(vertexe); i++ {
 		test.AddVertex(vertexe[i])
@@ -205,91 +107,131 @@ func main() {
 	visited := make(map[*Vertix]bool)
 	start := test.GetVertex(vertexe[0])
 	end := test.GetVertex(vertexe[len(vertexe)-1])
-	var paths [][]string
 
 	test.dfs(start, end, visited, []string{}, &paths)
-	d := Rougroupe(paths)
-	r := []string{"1","2"}
-	b:= FindPaths(d)
-	b = append(b, r)
 
-	fmt.Println(Chois(b,1))
+	MapOfPaths := Lemin.Rougroupe(paths)
+	BestPaths := Lemin.FindPaths(MapOfPaths)
+	n, _ := strconv.Atoi(insects)
+	moveAnts(n, BestPaths)
 }
 
-func FindPaths(m map[int][][]string) [][]string {
-	if len(m) == 0 {
-		return nil
-	}
+func moveAnts(numAnts int, paths [][]string) {
+	var (
+		resfinal []string
+		matrix   [][]string
+	)
 
-	maxlin := 0
-	for i := range m {
-		if len(m[i]) > len(m[maxlin]) {
-			maxlin = i
+	for i := 0; i < len(paths); i++ {
+		for k := 0; k < numAnts; k++ {
+			for j := 1; j < len(paths[i]); j++ { // Commencer à 0
+
+				// Créer la chaîne pour chaque fourmi et chemin
+				restem := "L" + TAbloOfAnts(numAnts)[k] + "-" + paths[i][j]
+				resfinal = append(resfinal, restem)
+			}
+			matrix = append(matrix, resfinal)
+			resfinal = nil
+		}
+	}
+	tableau := (HandlTab(matrix))
+	fmt.Println(tableau)
+
+	// Afficher le résultat
+	// for _, res := range tableau {
+	// 	for _,rese := range res {
+	// 		fmt.Print(rese)
+	// 	}
+	// }
+}
+
+func HandlTab(tab [][]string) [][]string {
+	fmt.Println(tab)
+	var checkpathee []string
+	var checkformis []string
+	// str := ""
+	var res [][]string
+	
+	// lene := 0
+	for i := 0; i < len(tab); i++ {
+
+		Split := strings.Split(tab[i][0], "-")
+		ant := Split[0]
+		if i ==1 {
+			//fmt.Println()
+			fmt.Println(checkpathee)
+			fmt.Println(checkformis)
+			fmt.Println(valid(ant,checkformis) )
+			fmt.Println(valid(ExtraitP(tab[i]),checkpathee))
+
+		}
+
+		
+		
+
+		if (valid(ExtraitP(tab[i]),checkpathee) && i != len(tab)-1) || valid(ant,checkformis) {
+			//
+			continue
+		} else {
+			//
+		    checkant(ant, &checkformis)
+			checkpathe(&checkpathee, ExtraitP(tab[i]))
+			res = append(res, tab[i])
+
+			// lene = len(tab[i])
+		}
+	}
+	// fmt.Println(checkformis)
+	// fmt.Println(checkpathee)
+	return res
+}
+
+func valid(str string, tab []string) bool {
+	for _, val := range tab {
+		if str == val {
+			return true
+		}
+	}
+	return false
+}
+
+func ExtraitP(T []string) string {
+	actuelPath := ""
+	for i := 0; i < len(T); i++ {
+		Split := strings.Split(T[i], "-")[1]
+		actuelPath += Split
+
+	}
+	return actuelPath
+}
+
+func checkpathe(tab1 *[]string, path string ) bool {
+	for _, val := range *tab1 {
+		if val == path {
+			return true
 		}
 	}
 
-	return m[maxlin]
+	*tab1 = append(*tab1, path)
+
+	return false
 }
 
-
-
-func Chois(s [][]string, n int) [][]string {
-	sort.Slice(s, func(i, j int) bool {
-		return len(s[i]) < len(s[j])
-	})
-	
-
-
-
-
-	
+func checkant(ant string, Tab *[]string) bool {
+	// fmt.Println(Tab)
+	for _, val := range *Tab {
+		if ant == val {
+			return true
+		}
+	}
+	*Tab = append(*Tab, ant)
+	return false
 }
 
-// func Parcour(slice [][]string, n int) {
-// 	pp := make([][]string, len(slice))
-// 	for i := 0; i < len(slice); i++ {
-// 		pp[i] = make([]string, len(slice[i]))
-// 	}
-// 	j := 1
-// 	for {
-// 		move(pp)
-// 		for i := 0; i < len(pp); i++ {
-// 			if j <= n {
-// 				pp[i][0] = "L" + strconv.Itoa(j)
-// 				j++
-// 			}
-// 		}
-// 		if checknil(pp) {
-// 			break
-// 		}
-// 		for i := 0; i < len(pp); i++ {
-// 			for j := 0; j < len(pp[i]); j++ {
-// 				if pp[i][j] != "" {
-// 					fmt.Print(pp[i][j], "-", slice[i][j], " ")
-// 				}
-// 			}
-// 		}
-// 		fmt.Println()
-// 	}
-// }
-
-// func checknil(pp [][]string) bool {
-// 	for i := 0; i < len(pp); i++ {
-// 		for j := 0; j < len(pp[i]); j++ {
-// 			if pp[i][j] != "" {
-// 				return false
-// 			}
-// 		}
-// 	}
-// 	return true
-// }
-
-// func move(arr [][]string) [][]string {
-// 	for i := 0; i < len(arr); i++ {
-// 		for j := len(arr[i]) - 1; j > 0; j-- {
-// 			arr[i][j] = arr[i][j-1]
-// 		}
-// 		arr[i][0] = ""
-// 	}
-// 	return arr
-// }
+func TAbloOfAnts(ants int) []string {
+	var T []string
+	for i := 1; i <= ants; i++ {
+		T = append(T, strconv.Itoa(i))
+	}
+	return T
+}
