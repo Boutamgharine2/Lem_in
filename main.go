@@ -112,126 +112,43 @@ func main() {
 
 	MapOfPaths := Lemin.Rougroupe(paths)
 	BestPaths := Lemin.FindPaths(MapOfPaths)
-	n, _ := strconv.Atoi(insects)
-	moveAnts(n, BestPaths)
+	fmt.Println(BestPaths)
+	NumberOfAnts, _ := strconv.Atoi(insects)
+	Ants := Lemin.MoveAnts(NumberOfAnts, BestPaths)
+	 fmt.Println(Ants)
 }
+   
 
-func moveAnts(numAnts int, paths [][]string) {
-	var (
-		resfinal []string
-		matrix   [][]string
-	)
-
-	for i := 0; i < len(paths); i++ {
-		for k := 0; k < numAnts; k++ {
-			for j := 1; j < len(paths[i]); j++ { // Commencer à 0
-
-				// Créer la chaîne pour chaque fourmi et chemin
-				restem := "L" + TAbloOfAnts(numAnts)[k] + "-" + paths[i][j]
-				resfinal = append(resfinal, restem)
+func printTable(table [][]string) {
+	// Itérer sur les lignes pour afficher les colonnes correspondantes
+	for i := 0; i < len(table[0]); i++ {
+		var rowElements []string
+		for j := 0; j < len(table); j++ {
+			if i < len(table[j]) {
+				rowElements = append(rowElements, table[j][i])
 			}
-			matrix = append(matrix, resfinal)
-			resfinal = nil
 		}
+		// Joindre les éléments de la ligne avec un espace et imprimer
+		fmt.Println(strings.Join(rowElements, " "))
 	}
-	tableau := (HandlTab(matrix))
-	fmt.Println(tableau)
-
-	// Afficher le résultat
-	// for _, res := range tableau {
-	// 	for _,rese := range res {
-	// 		fmt.Print(rese)
-	// 	}
-	// }
 }
 
-func HandlTab(tab [][]string) [][]string {
-	fmt.Println(tab)
-	var checkpathee []string
-	var checkformis []string
-	// str := ""
-	var res [][]string
-	
-	// lene := 0
-	for i := 0; i < len(tab); i++ {
-
-		Split := strings.Split(tab[i][0], "-")
-		ant := Split[0]
-		if i ==1 {
-			//fmt.Println()
-			fmt.Println(checkpathee)
-			fmt.Println(checkformis)
-			fmt.Println(valid(ant,checkformis) )
-			fmt.Println(valid(ExtraitP(tab[i]),checkpathee))
-
-		}
-
-		
-		
-
-		if (valid(ExtraitP(tab[i]),checkpathee) && i != len(tab)-1) || valid(ant,checkformis) {
-			//
-			continue
-		} else {
-			//
-		    checkant(ant, &checkformis)
-			checkpathe(&checkpathee, ExtraitP(tab[i]))
-			res = append(res, tab[i])
-
-			// lene = len(tab[i])
-		}
-	}
-	// fmt.Println(checkformis)
-	// fmt.Println(checkpathee)
-	return res
+func Comparaison(s1 string, s2 string) bool {
+	S1 := strings.Split(s1, "-")[1]
+	S2 := strings.Split(s2, "-")[1]
+	return S1 == S2
 }
 
-func valid(str string, tab []string) bool {
-	for _, val := range tab {
-		if str == val {
-			return true
-		}
-	}
-	return false
-}
+// L1-3 L2-2
+// L1-4 L2-5 L3-3
+// L1-0 L2-6 L3-4
+// L2-0 L3-0
 
-func ExtraitP(T []string) string {
-	actuelPath := ""
-	for i := 0; i < len(T); i++ {
-		Split := strings.Split(T[i], "-")[1]
-		actuelPath += Split
+// func Final(ants [][]string) {
+// 	var rs []string
 
-	}
-	return actuelPath
-}
+// 	for i:=0;i<len(ants);i++ {
+// 		if !Comparaison(ants[i][])
 
-func checkpathe(tab1 *[]string, path string ) bool {
-	for _, val := range *tab1 {
-		if val == path {
-			return true
-		}
-	}
-
-	*tab1 = append(*tab1, path)
-
-	return false
-}
-
-func checkant(ant string, Tab *[]string) bool {
-	// fmt.Println(Tab)
-	for _, val := range *Tab {
-		if ant == val {
-			return true
-		}
-	}
-	*Tab = append(*Tab, ant)
-	return false
-}
-
-func TAbloOfAnts(ants int) []string {
-	var T []string
-	for i := 1; i <= ants; i++ {
-		T = append(T, strconv.Itoa(i))
-	}
-	return T
-}
+// 	}
+// }

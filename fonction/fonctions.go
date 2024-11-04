@@ -1,8 +1,10 @@
 package Lemin
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -121,5 +123,135 @@ func Supartion(s string) []string {
 		}
 	}
 	T = append(T, c)
+	return T
+}
+
+// func MoveAnts(numAnts int, paths [][]string) [][]string {
+// 	var (
+// 		res      []string
+// 		resfinal [][]string
+// 		matrix   [][]string
+// 	)
+
+// 	for i := 0; i < len(paths); i++ {
+// 		for k := 0; k < numAnts; k++ {
+// 			for j := 1; j < len(paths[i]); j++ {
+
+//					restem := "L" + TAbloOfAnts(numAnts)[k] + "-" + paths[i][j]
+//					res = append(res, restem)
+//				}
+//				matrix = append(matrix, res)
+//				res = nil
+//			}
+//		}
+//		fmt.Println(matrix)
+//		resfinal = (HandlTab(matrix))
+//		return resfinal
+//	}
+func MoveAnts(numAnts int, paths [][]string) [][]string {
+	type path struct {
+		i    int
+		path []string
+	}
+	paths1 := []path{}
+	for _, v := range paths {
+		v = v[1:]
+		paths1 = append(paths1, path{len(v), v})
+	}
+	result := make([][]string, numAnts)
+	//fmt.Println(paths1, result, numAnts)
+	for i := 1; i <= numAnts; i++ {
+		minidx := 0
+		for i1, v := range paths1 {
+			if paths1[minidx].i >= v.i {
+				minidx = i1
+			}
+		}
+		pathCrossed := []string{}
+		for i1 := len(paths1[minidx].path); i1 < paths1[minidx].i; i1++ {
+			pathCrossed = append(pathCrossed, "")
+		}
+		for _, v := range paths1[minidx].path {
+			pathCrossed = append(pathCrossed, fmt.Sprintf("L%d-%s", i, v))
+		}
+		result[i-1] = pathCrossed
+		paths1[minidx].i++
+	}
+	for _, v := range result {
+		fmt.Println(v)
+	}
+	return result
+}
+
+func HandlTab(tab [][]string) [][]string {
+	var checkpathee []string
+	var checkformis []string
+	var res [][]string
+
+	for i := 0; i < len(tab); i++ {
+
+		Split := strings.Split(tab[i][0], "-")
+		ant := Split[0]
+
+		if (valid(ExtraitP(tab[i]), checkpathee) && i != len(tab)-1) || valid(ant, checkformis) {
+			continue
+		} else {
+			checkant(ant, &checkformis)
+			checkpathe(&checkpathee, ExtraitP(tab[i]))
+			res = append(res, tab[i])
+
+		}
+	}
+
+	return res
+}
+
+func valid(str string, tab []string) bool {
+	for _, val := range tab {
+		if str == val {
+			return true
+		}
+	}
+	return false
+}
+
+func ExtraitP(T []string) string {
+	actuelPath := ""
+	for i := 0; i < len(T); i++ {
+		Split := strings.Split(T[i], "-")[1]
+		actuelPath += Split
+
+	}
+	return actuelPath
+}
+
+func checkpathe(tab1 *[]string, path string) bool {
+	for _, val := range *tab1 {
+		if val == path {
+			return true
+		}
+	}
+
+	*tab1 = append(*tab1, path)
+
+	return false
+}
+
+func checkant(ant string, Tab *[]string) bool {
+	// fmt.Println(Tab)
+	for _, val := range *Tab {
+		if ant == val {
+			return true
+		}
+	}
+	*Tab = append(*Tab, ant)
+	return false
+}
+
+func TAbloOfAnts(ants int) []string {
+	var T []string
+	for i := 1; i <= ants; i++ {
+		T = append(T, strconv.Itoa(i))
+	}
 	return T
 }
