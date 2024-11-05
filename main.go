@@ -112,43 +112,11 @@ func main() {
 
 	MapOfPaths := Lemin.Rougroupe(paths)
 	BestPaths := Lemin.FindPaths(MapOfPaths)
-	fmt.Println(BestPaths)
+
 	NumberOfAnts, _ := strconv.Atoi(insects)
 	Ants := Lemin.MoveAnts(NumberOfAnts, BestPaths)
-	 fmt.Println(Ants)
-}
-   
-
-func printTable(table [][]string) {
-	// Itérer sur les lignes pour afficher les colonnes correspondantes
-	for i := 0; i < len(table[0]); i++ {
-		var rowElements []string
-		for j := 0; j < len(table); j++ {
-			if i < len(table[j]) {
-				rowElements = append(rowElements, table[j][i])
-			}
-		}
-		// Joindre les éléments de la ligne avec un espace et imprimer
-		fmt.Println(strings.Join(rowElements, " "))
+	for _, v := range Lemin.SortTable(Ants) {
+		fmt.Println(strings.Join(v, " "))
 	}
 }
 
-func Comparaison(s1 string, s2 string) bool {
-	S1 := strings.Split(s1, "-")[1]
-	S2 := strings.Split(s2, "-")[1]
-	return S1 == S2
-}
-
-// L1-3 L2-2
-// L1-4 L2-5 L3-3
-// L1-0 L2-6 L3-4
-// L2-0 L3-0
-
-// func Final(ants [][]string) {
-// 	var rs []string
-
-// 	for i:=0;i<len(ants);i++ {
-// 		if !Comparaison(ants[i][])
-
-// 	}
-// }

@@ -159,7 +159,6 @@ func MoveAnts(numAnts int, paths [][]string) [][]string {
 		paths1 = append(paths1, path{len(v), v})
 	}
 	result := make([][]string, numAnts)
-	//fmt.Println(paths1, result, numAnts)
 	for i := 1; i <= numAnts; i++ {
 		minidx := 0
 		for i1, v := range paths1 {
@@ -167,21 +166,35 @@ func MoveAnts(numAnts int, paths [][]string) [][]string {
 				minidx = i1
 			}
 		}
-		pathCrossed := []string{}
-		for i1 := len(paths1[minidx].path); i1 < paths1[minidx].i; i1++ {
-			pathCrossed = append(pathCrossed, "")
-		}
-		for _, v := range paths1[minidx].path {
+		
+		current := paths1[minidx]
+
+		pathCrossed := make([]string, current.i-len(current.path))
+
+		for _, v := range current.path {
 			pathCrossed = append(pathCrossed, fmt.Sprintf("L%d-%s", i, v))
 		}
 		result[i-1] = pathCrossed
+		
 		paths1[minidx].i++
 	}
-	for _, v := range result {
-		fmt.Println(v)
-	}
+	
+	
+
 	return result
 }
+func SortTable(antPath [][]string) [][]string {
+	res := make([][]string, len(antPath[len(antPath)-1]))
+	for _, v := range antPath {
+		for i1, v1 := range v {
+			if v1 != "" {
+				res[i1] = append(res[i1], v1)
+			}
+		}
+	}
+	return res
+}
+
 
 func HandlTab(tab [][]string) [][]string {
 	var checkpathee []string
