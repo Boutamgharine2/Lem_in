@@ -8,10 +8,12 @@ import (
 	"strings"
 )
 
-func Handlfile() ([]string, []string, string) {
+func Handlfile() ([]string, []string, string, string, string, string) {
 	var Edges []string
 	var vertexe []string
 	var Romm []string
+	var end string
+	var start string
 	v := os.Args
 	if len(v) != 2 {
 		log.Fatal("invalid Arguments!")
@@ -22,9 +24,14 @@ func Handlfile() ([]string, []string, string) {
 	}
 	str := string(file)
 	str1 := strings.Split(str, "\n")
-	insect := str1[0]
+	ants := str1[0]
 
 	for i := 1; i < len(str1); i++ {
+		if str1[i] == "##start" {
+			start = strings.Split(str1[i+1], " ")[0]
+		} else if str1[i] == "##end" {
+			end = strings.Split(str1[i+1], " ")[0]
+		}
 
 		if strings.Contains(str1[i], "-") {
 			Edges = append(Edges, str1[i])
@@ -37,7 +44,7 @@ func Handlfile() ([]string, []string, string) {
 			vertexe = append(vertexe, Romm[i])
 		}
 	}
-	return vertexe, Edges, insect
+	return vertexe, Edges, ants, str, start, end
 }
 
 func Rougroupe(allPaths [][]string) map[int][][]string {
@@ -166,7 +173,7 @@ func MoveAnts(numAnts int, paths [][]string) [][]string {
 				minidx = i1
 			}
 		}
-		
+
 		current := paths1[minidx]
 
 		pathCrossed := make([]string, current.i-len(current.path))
@@ -175,14 +182,13 @@ func MoveAnts(numAnts int, paths [][]string) [][]string {
 			pathCrossed = append(pathCrossed, fmt.Sprintf("L%d-%s", i, v))
 		}
 		result[i-1] = pathCrossed
-		
+
 		paths1[minidx].i++
 	}
-	
-	
 
 	return result
 }
+
 func SortTable(antPath [][]string) [][]string {
 	res := make([][]string, len(antPath[len(antPath)-1]))
 	for _, v := range antPath {
@@ -194,7 +200,6 @@ func SortTable(antPath [][]string) [][]string {
 	}
 	return res
 }
-
 
 func HandlTab(tab [][]string) [][]string {
 	var checkpathee []string

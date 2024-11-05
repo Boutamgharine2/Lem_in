@@ -39,7 +39,7 @@ func (g *Graph) AddEdge(from, to string) {
 		err := fmt.Errorf("invalid Edge %v==>%v", from, to)
 		fmt.Println(err)
 	} else if Contain(FromVertex.adjacenlist, to) {
-		err := fmt.Errorf("%v==>%v  est deja exist!", from, to)
+		err := fmt.Errorf("%v==>%v  est deja exist", from, to)
 		fmt.Println(err)
 
 	} else {
@@ -94,7 +94,7 @@ func (g *Graph) dfs(start, end *Vertix, visited map[*Vertix]bool, path []string,
 
 func main() {
 	var paths [][]string
-	vertexe, Edges, insects := Lemin.Handlfile()
+	vertexe, Edges, insects, str, start, end := Lemin.Handlfile()
 	test := &Graph{}
 	for i := 0; i < len(vertexe); i++ {
 		test.AddVertex(vertexe[i])
@@ -105,18 +105,19 @@ func main() {
 	}
 
 	visited := make(map[*Vertix]bool)
-	start := test.GetVertex(vertexe[0])
-	end := test.GetVertex(vertexe[len(vertexe)-1])
+	startV := test.GetVertex(start)
+	endV := test.GetVertex(end)
 
-	test.dfs(start, end, visited, []string{}, &paths)
+	test.dfs(startV, endV, visited, []string{}, &paths)
 
 	MapOfPaths := Lemin.Rougroupe(paths)
 	BestPaths := Lemin.FindPaths(MapOfPaths)
 
 	NumberOfAnts, _ := strconv.Atoi(insects)
-	Ants := Lemin.MoveAnts(NumberOfAnts, BestPaths)
-	for _, v := range Lemin.SortTable(Ants) {
+	AntsInPaths := Lemin.MoveAnts(NumberOfAnts, BestPaths)
+	resfinal := Lemin.SortTable(AntsInPaths)
+	fmt.Println(str)
+	for _, v := range resfinal {
 		fmt.Println(strings.Join(v, " "))
 	}
 }
-
