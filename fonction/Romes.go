@@ -10,11 +10,17 @@ func Roms(s string) string {
 		if s[i] == ' ' {
 			break
 		}
-		if s[i] < '0' || s[i] > '9' {
-			return ""
-		}
+		
 		rome += string(s[i])
 
 	}
 	return rome
+}
+func ContienNumber(str string) bool {
+	for i:=0;i<len(str);i++ {
+		if str[i]>='0' && str[i]<='9' {
+			return true
+		}
+	}
+	return false
 }

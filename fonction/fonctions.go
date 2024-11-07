@@ -33,10 +33,13 @@ func Handlfile() ([]string, []string, string, string, string, string) {
 			end = strings.Split(str1[i+1], " ")[0]
 		}
 
+
 		if strings.Contains(str1[i], "-") {
 			Edges = append(Edges, str1[i])
 		}
+		if i > 0  && ContienNumber(str1[i]){ 
 		Romm = append(Romm, Roms(str1[i]))
+		}
 
 	}
 	for i := 0; i < len(Romm); i++ {
@@ -44,10 +47,11 @@ func Handlfile() ([]string, []string, string, string, string, string) {
 			vertexe = append(vertexe, Romm[i])
 		}
 	}
+
 	return vertexe, Edges, ants, str, start, end
 }
 
-func Rougroupe(allPaths [][]string) map[int][][]string {
+func Rougroupe(allPaths [][]string) map[int][][]string {     //classer les pates valides  dans des tableaux defferants 
 	res := make(map[int][][]string)
 	indix := 0
 	for _, path := range allPaths {
@@ -133,28 +137,6 @@ func Supartion(s string) []string {
 	return T
 }
 
-// func MoveAnts(numAnts int, paths [][]string) [][]string {
-// 	var (
-// 		res      []string
-// 		resfinal [][]string
-// 		matrix   [][]string
-// 	)
-
-// 	for i := 0; i < len(paths); i++ {
-// 		for k := 0; k < numAnts; k++ {
-// 			for j := 1; j < len(paths[i]); j++ {
-
-//					restem := "L" + TAbloOfAnts(numAnts)[k] + "-" + paths[i][j]
-//					res = append(res, restem)
-//				}
-//				matrix = append(matrix, res)
-//				res = nil
-//			}
-//		}
-//		fmt.Println(matrix)
-//		resfinal = (HandlTab(matrix))
-//		return resfinal
-//	}
 func MoveAnts(numAnts int, paths [][]string) [][]string {
 	type path struct {
 		i    int
@@ -163,13 +145,13 @@ func MoveAnts(numAnts int, paths [][]string) [][]string {
 	paths1 := []path{}
 	for _, v := range paths {
 		v = v[1:]
-		paths1 = append(paths1, path{len(v), v})
+		paths1 = append(paths1, path{len(v), v})              // ajouter chaque path avec son len au paths1 (slice of struct)
 	}
-	result := make([][]string, numAnts)
+	result := make([][]string, numAnts)             // criation d'un tableau dont la longueur est le nemero des fourmès
 	for i := 1; i <= numAnts; i++ {
 		minidx := 0
 		for i1, v := range paths1 {
-			if paths1[minidx].i >= v.i {
+			if paths1[minidx].i >= v.i {                  //chercher la path que possede le minumun longueur
 				minidx = i1
 			}
 		}
@@ -177,21 +159,24 @@ func MoveAnts(numAnts int, paths [][]string) [][]string {
 		current := paths1[minidx]
 
 		pathCrossed := make([]string, current.i-len(current.path))
+		
 
 		for _, v := range current.path {
 			pathCrossed = append(pathCrossed, fmt.Sprintf("L%d-%s", i, v))
 		}
-		result[i-1] = pathCrossed
+		
+		result[i-1] = pathCrossed            //i-1 parceque on commance i par 1
 
-		paths1[minidx].i++
+		paths1[minidx].i++    // incrementer la longeur de la path apres que la fourmè est passè
 	}
 
 	return result
 }
 
-func SortTable(antPath [][]string) [][]string {
-	res := make([][]string, len(antPath[len(antPath)-1]))
-	for _, v := range antPath {
+func SortTable(antsPath [][]string) [][]string {
+	res := make([][]string, len(antsPath[len(antsPath)-1]))           // res possede la longeur de plus grand path
+	for _, v := range antsPath {
+		//fmt.Println(v)
 		for i1, v1 := range v {
 			if v1 != "" {
 				res[i1] = append(res[i1], v1)
@@ -256,7 +241,6 @@ func checkpathe(tab1 *[]string, path string) bool {
 }
 
 func checkant(ant string, Tab *[]string) bool {
-	// fmt.Println(Tab)
 	for _, val := range *Tab {
 		if ant == val {
 			return true

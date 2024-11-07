@@ -112,11 +112,13 @@ func main() {
 
 	MapOfPaths := Lemin.Rougroupe(paths)
 	BestPaths := Lemin.FindPaths(MapOfPaths)
+	fmt.Println(BestPaths)
 
 	NumberOfAnts, _ := strconv.Atoi(insects)
 	AntsInPaths := Lemin.MoveAnts(NumberOfAnts, BestPaths)
 	resfinal := Lemin.SortTable(AntsInPaths)
 	fmt.Println(str)
+	fmt.Println()
 	for _, v := range resfinal {
 		fmt.Println(strings.Join(v, " "))
 	}
